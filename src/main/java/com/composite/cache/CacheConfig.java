@@ -51,6 +51,7 @@ public class CacheConfig {
     @Primary
     public CacheManager compositeCacheManager(@Qualifier("redisCacheManager") CacheManager redisCacheManager,
         LocalCacheManager localCacheManager) {
+        // 일부러 localManager를 앞으로 l1 -> l2 순서보장
         return new CompositeCacheManager(Arrays.asList(localCacheManager, redisCacheManager), localCacheManager);
     }
 

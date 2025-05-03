@@ -1,7 +1,5 @@
 package com.composite.service;
 
-import com.composite.cache.CacheGroup;
-import com.composite.cache.CacheName;
 import com.composite.controller.BoardRequest;
 import com.composite.controller.BoardResponse;
 import com.composite.controller.BoardResponse.GetList;
@@ -26,7 +24,7 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    @Cacheable(cacheNames = CacheName.GLOBAL_ONLY, key="1")
+    @Cacheable(cacheNames = "boards")
     public List<GetList> getAll(){
         List<BoardEntity> boards = boardRepository.findAll();
         return boards.stream()
@@ -34,7 +32,7 @@ public class BoardService {
             .toList();
     }
 
-    @Cacheable(cacheNames = CacheName.COMPOSITE, key = "#id")
+    @Cacheable(cacheNames = "board", key = "#id")
     public BoardResponse.Get getById(Long id){
         BoardEntity board = boardRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
