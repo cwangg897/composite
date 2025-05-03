@@ -26,14 +26,14 @@ public class CompositeCache implements Cache {
 
     @Override
     public ValueWrapper get(Object key) {
-        for (Cache cache : caches) {
+        for (Cache cache : caches) { // redis, local에서 찾는거임
             ValueWrapper valueWrapper = cache.get(key);
             if (valueWrapper != null && valueWrapper.get() != null) {
-                updatableCacheManager.putIfAbsent(cache, key, valueWrapper.get());
+                updatableCacheManager.putIfAbsent(cache, key, valueWrapper.get()); // L1 채우기
                 return valueWrapper;
             }
         }
-        return null;
+        return null; // 모든 계층에서 못찾음
     }
 
     @Override

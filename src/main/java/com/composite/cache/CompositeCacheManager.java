@@ -20,25 +20,22 @@ public class CompositeCacheManager implements CacheManager {
         }
     }
 
+
     @Override
     public Cache getCache(String name) {
-        if (CacheGroup.isCompositeType(name)) {
-            List<Cache> caches = new ArrayList<>();
-            for (CacheManager manager : cacheManagers) {
-                Cache cache = manager.getCache(name);
-                if (cache != null) {
-                    caches.add(cache);
-                }
-            }
-            return new CompositeCache(caches, updatableCacheManager);
-        }
-
+        List<Cache> caches = new ArrayList<>();
         for (CacheManager manager : cacheManagers) {
             Cache cache = manager.getCache(name);
             if (cache != null) {
-                return cache;
+                caches.add(cache);
             }
         }
+
+        // 최소 하나라도 있으면 CompositeCache 생성
+        if (!caches.isEmpty()) {
+            return new CompositeCache(caches, updatableCacheManager); // todo. CompositeCache를 매번만드는게 문제임
+        }
+
         return null;
     }
 

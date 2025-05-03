@@ -6,13 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-public class LocalCacheManager  implements CacheManager, UpdatableCacheManager {
+@Slf4j
+public class LocalCacheManager implements CacheManager, UpdatableCacheManager {
+
 
     private final Map<String, Cache> cacheMap = new ConcurrentHashMap<>();
+
+    public LocalCacheManager() {
+    }
 
     public LocalCacheManager(List<Cache> caches) {
         for (Cache cache : caches) {
@@ -20,15 +26,16 @@ public class LocalCacheManager  implements CacheManager, UpdatableCacheManager {
         }
     }
 
+    @Override
+    public Cache getCache(String name) {
+        log.info("로컬 캐시 조회 : {}", name);
+        return cacheMap.computeIfAbsent(name, this::createNewCache);
+    }
+
     private Cache createNewCache(String name) {
         return new CaffeineCache(name, Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES) // default TTL
             .build());
-    }
-
-    @Override
-    public Cache getCache(String name) {
-        return cacheMap.computeIfAbsent(name, this::createNewCache);
     }
 
     @Override
@@ -42,5 +49,6 @@ public class LocalCacheManager  implements CacheManager, UpdatableCacheManager {
         if (local != null) {
             local.putIfAbsent(key, value);
         }
+
     }
 }
