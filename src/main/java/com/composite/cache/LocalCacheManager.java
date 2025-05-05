@@ -34,7 +34,7 @@ public class LocalCacheManager implements CacheManager, UpdatableCacheManager {
 
     private Cache createNewCache(String name) {
         return new CaffeineCache(name, Caffeine.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES) // default TTL
+            .expireAfterWrite(30, TimeUnit.SECONDS) // default TTL
             .recordStats()
             .build());
     }
