@@ -24,7 +24,7 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    @Cacheable(cacheNames = "boards")
+    @Cacheable(cacheNames = "boards", cacheManager = "redisCacheManager")
     public List<GetList> getAll(){
         List<BoardEntity> boards = boardRepository.findAll();
         return boards.stream()
@@ -33,7 +33,14 @@ public class BoardService {
     }
 
     @Cacheable(cacheNames = "board", key = "#id")
-    public BoardResponse.Get getById(Long id){
+    public BoardResponse.Get getByIdComposite(Long id){
+        BoardEntity board = boardRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        return new BoardResponse.Get(board.getId(), board.getContent(), board.getCreatedAt(), board.getUpdatedAt());
+    }
+
+    @Cacheable(cacheNames = "board", key = "'redis'+#id", cacheManager = "redisCacheManager")
+    public BoardResponse.Get getByIdGlobal(Long id){
         BoardEntity board = boardRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         return new BoardResponse.Get(board.getId(), board.getContent(), board.getCreatedAt(), board.getUpdatedAt());

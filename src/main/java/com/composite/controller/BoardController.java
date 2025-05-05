@@ -33,9 +33,15 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/composite/{id}")
     public ResponseEntity<BoardResponse.Get> getById(@PathVariable Long id) {
-        BoardResponse.Get board = boardService.getById(id);
+        BoardResponse.Get board = boardService.getByIdComposite(id);
+        return ResponseEntity.ok(board);
+    }
+
+    @GetMapping("/global/{id}")
+    public ResponseEntity<BoardResponse.Get> getByIdGlobal(@PathVariable Long id) {
+        BoardResponse.Get board = boardService.getByIdGlobal(id);
         return ResponseEntity.ok(board);
     }
 

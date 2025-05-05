@@ -1,5 +1,6 @@
 package com.composite.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,15 +20,19 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class CacheConfig {
 
     private final RedisConnectionFactory redisConnectionFactory;
+    private final ObjectMapper objectMapper;
 
-    public CacheConfig(RedisConnectionFactory redisConnectionFactory) {
+
+
+    public CacheConfig(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
         this.redisConnectionFactory = redisConnectionFactory;
+        this.objectMapper = objectMapper;
     }
 
     /**
      * Local 캐시매니저
      */
-    @Bean
+    @Bean(name = "localCacheManager")
     public LocalCacheManager localCacheManager() {
         return new LocalCacheManager();
     }

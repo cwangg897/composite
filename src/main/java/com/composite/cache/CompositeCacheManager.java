@@ -23,7 +23,7 @@ public class CompositeCacheManager implements CacheManager {
             this.cacheNames.addAll(manager.getCacheNames());
         }
     }
-    
+
     @Override
     public Cache getCache(String name) {
         return cacheLookupCache.computeIfAbsent(name, this::buildCompositeCache);
